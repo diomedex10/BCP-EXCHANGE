@@ -22,7 +22,7 @@ public class DivisaService {
 		
 		String currencyDefault = "USD";
 		Divisa divisa, divisaTemp;
-		float amontChange = 0;
+		double amontChange = 0;
 		
 		GetDivisaResponse divisaResponse = new GetDivisaResponse();
 		
@@ -31,18 +31,18 @@ public class DivisaService {
 		divisaResponse.setDestinationCurrency(divisaRequest.getDestinationCurrency());
 		
 		if(divisaRequest.getDestinationCurrency().equals(currencyDefault)) {
-			divisa =  divisaRepository.getDivisaByName(divisaRequest.getDestinationCurrency());
-			amontChange = divisa.getValue() * amontChange ;
+			divisa =  divisaRepository.getDivisaByName(divisaRequest.getOriginCurrency());
+			amontChange = divisa.getValue() * (divisaRequest.getStartingAmount()) ;
 			divisaResponse.setFinalyAmount(amontChange);
 			divisaResponse.setExchangeRate(divisa.getValue());
 		} else {
 			float exchangeRate = 0;
-			divisa =  divisaRepository.getDivisaByName(currencyDefault);
-			amontChange = divisa.getValue() * amontChange ;
+			divisa =  divisaRepository.getDivisaByName(divisaRequest.getOriginCurrency());
+			amontChange = divisa.getValue() * (divisaRequest.getStartingAmount()) ;
 			exchangeRate = divisa.getValue();
 			
 			divisaTemp =  divisaRepository.getDivisaByName(divisaRequest.getDestinationCurrency());
-			amontChange = divisaTemp.getValue() / amontChange;
+			amontChange =  amontChange/divisaTemp.getValue();
 			exchangeRate = exchangeRate/divisaTemp.getValue();
 			
 			divisaResponse.setFinalyAmount(amontChange);
